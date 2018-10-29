@@ -15,61 +15,140 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+// PROTOYPES
+void bblSort(int *array1);
+void selectSort(int *array2);
+
+// GLOBAL VARIABLES
+int const SIZE = 8; // Because we know we will only be working with 8 ints
+
 
 // MAIN BEGIN
 int main()
 {
-   int num1, num2, num3, num4, num5, num6, num7, num8;
-   int *bblsort = NULL;    // Declare pointer for bubble sort dynamic array
-   int *selectsort = NULL; // Declare pointer for selection sort dynamic array
-   char pause;
+   int *array1 = NULL; // Declare pointer for bubble sort dynamic array
+   int *array2 = NULL; // Declare pointer for selection sort dynamic array
+   int num; // To hold user value for array initialization
    
-   bblsort    = (int*)calloc(8, sizeof(int)); // Allocate memory for int array
-   selectsort = (int*)calloc(8, sizeof(int)); // Allocate memory for int array
+   array1 = (int*)calloc(SIZE, sizeof(int)); // Allocate memory for int array
+   array2 = (int*)calloc(SIZE, sizeof(int)); // Allocate memory for int array
+   
+   
    
    puts("Please enter eight integers...");
    
-   printf("int 1: ");
-   scanf("%d", &num1);
-   bblsort[0]    = num1;
-   selectsort[0] = num1;
+   for(int i = 0; i < SIZE; i++) // Loop to grab all 8 ints from user
+   {
+      printf("int %d: ", (i + 1));
+      scanf("%d", &num); // Get user num
+      array1[i] = num;   // Put in array 1
+      array2[i] = num;   // Put in array 2
+   }
    
-   printf("int 2: ");
-   scanf("%d", &num2);
-   bblsort[1]    = num2;
-   selectsort[1] = num2;
+   puts("\nHere is your series sorted in ascending order with a bubble sort:");
+
+   for(int i = 0; i < SIZE; i++, array1++) // Print series before sort
+   {
+      printf("%d", *array1); // Use of bracket notation
+   }
+   puts(""); // Add newline
+   array1 -= (SIZE); // Reset array to beginning
    
-   printf("int 3: ");
-   scanf("%d", &num3);
-   bblsort[2]    = num3;
-   selectsort[2] = num3;
+   bblSort(array1); // Call bubble sort function
    
-   printf("int 4: ");
-   scanf("%d", &num4);
-   bblsort[3]    = num4;
-   selectsort[3] = num4;
+   puts("\nHere is your series sorted in ascending order with a selection sort:");
    
-   printf("int 5: ");
-   scanf("%d", &num5);
-   bblsort[4]    = num5;
-   selectsort[4] = num5;
+   for(int i = 0; i < SIZE; i++, array2++) // Print series before sort
+   {
+      printf("%d", *array2); // Use of bracket notation
+   }
+   puts(""); // Add newline
+   array2 -= (SIZE); // Reset array to beginning
    
-   printf("int 6: ");
-   scanf("%d", &num6);
-   bblsort[5]    = num6;
-   selectsort[5] = num6;
-   
-   printf("int 7: ");
-   scanf("%d", &num7);
-   bblsort[6]    = num7;
-   selectsort[6] = num7;
-   
-   printf("int 8: ");
-   scanf("%d", &num8);
-   bblsort[7]    = num8;
-   selectsort[7] = num8;
-   
-   scanf("%c%*c", &pause);
+   selectSort(array2); // Call selection sort function
    
    return 0;
 } // MAIN END
+
+
+/***************************************************************************
+ Header:  void bblSort(int *array1)
+ 
+ Description:
+ Takes series and prints it after every pass-through with a bubble sort.
+***************************************************************************/
+void bblSort(int *array1)
+{
+   int swap, swapHold;
+   
+   do
+   {
+      swap = 0;
+      
+      for(int i = 0; i < (SIZE - 1); i++)
+      {
+         if(array1[i] > array1[i + 1]) // If int is > than next int in series, swap them
+         {
+            swapHold = array1[i];       // Hold value A
+            array1[i] = array1[i + 1]; // Put value B in place A
+            array1[i + 1] = swapHold; // Put value A in place B
+            
+            swap = 1; // Set to true for another overall pass
+         }
+      }
+      
+      if(swap) // If the new series is different than the previous
+      {
+         for(int i = 0; i < SIZE; i++) // Print array after pass-through
+            printf("%d", array1[i]);
+         
+         puts(""); // Add newline
+      }
+   } while(swap);
+   
+   free(array1);  // Clear memory that was allocated for array
+   array1 = NULL; // Set pointer to null
+}
+
+
+/***************************************************************************
+ Header:  void selectSort(int *array2)
+ 
+ Description:
+ Takes series and prints it after every pass-through with a bubble sort.
+ ***************************************************************************/
+void selectSort(int *array2)
+{
+   int scan, minIndex, minValue;
+   int better; // 'better' will incrememnt if new lowest found
+   
+   for(scan = 0; scan < (SIZE - 1); scan++)
+   {
+      minIndex = scan;         // Hold the index of the smallest int
+      minValue = array2[scan]; // Initialize minValue with starting int
+      better = 0; // Reset to 0
+      
+      for(int i = (scan + 1); i < SIZE; i++)
+      {
+         if(array2[i] < minValue)
+         {
+            better++; // Lower value found
+            minValue = array2[i];  // Grab value of new smallest int
+            minIndex = i;          // Grab index position of new smallest int
+         }
+      }
+      // Here we swap the first int with the smallest int
+      array2[minIndex] = array2[scan]; // Move starting int to position where smallest int was
+      array2[scan] = minValue;         // Place smallest int in the starting position
+      
+      if(scan != (SIZE - 2) || better) // Output new series unless last element and no change
+      {
+         for(int i = 0; i < SIZE; i++) // Print array after pass-through
+            printf("%d", array2[i]);
+      }
+      puts(""); // Add newline
+   }
+   
+   free(array2);  // Clear memory that was allocated for array
+   array2 = NULL; // Set pointer to null
+}
